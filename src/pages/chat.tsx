@@ -11,12 +11,7 @@ import {
 import { MessageBubble } from '@/components/chat/message-bubble';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { BotIcon, DatabaseIcon, SendHorizontalIcon, SquareIcon, Trash2Icon } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -24,14 +19,7 @@ import { cn } from '@/lib/utils';
 const transport = new DefaultChatTransport({ api: '/api/chat' });
 
 export default function ChatPage() {
-  const {
-    messages,
-    sendMessage,
-    status,
-    stop,
-    setMessages,
-    error,
-  } = useChat({
+  const { messages, sendMessage, status, stop, setMessages, error } = useChat({
     transport,
     onError: (err) => {
       console.error('[useChat] error:', err);
@@ -57,7 +45,7 @@ export default function ChatPage() {
         handleSend();
       }
     },
-    [handleSend]
+    [handleSend],
   );
 
   return (
@@ -66,7 +54,7 @@ export default function ChatPage() {
       <header className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
           <BotIcon className="size-5 text-primary" />
-          <h1 className="text-lg font-semibold">KG Chat</h1>
+          <h1 className="text-lg font-semibold">AutoKGen chat</h1>
         </div>
 
         <div className="flex items-center gap-2">
@@ -98,12 +86,7 @@ export default function ChatPage() {
           </TooltipProvider>
 
           {messages.length > 0 && (
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={() => setMessages([])}
-              aria-label="Clear chat"
-            >
+            <Button variant="ghost" size="icon-xs" onClick={() => setMessages([])} aria-label="Clear chat">
               <Trash2Icon className="size-3.5" />
             </Button>
           )}
@@ -125,11 +108,7 @@ export default function ChatPage() {
                 <MessageBubble
                   key={message.id}
                   message={message}
-                  isStreaming={
-                    isLoading &&
-                    message.role === 'assistant' &&
-                    index === messages.length - 1
-                  }
+                  isStreaming={isLoading && message.role === 'assistant' && index === messages.length - 1}
                 />
               ))}
 
@@ -165,7 +144,10 @@ export default function ChatPage() {
 
       {/* Input */}
       <form
-        onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSend();
+        }}
         className="border-t bg-background p-4"
       >
         <div className="mx-auto flex max-w-3xl items-end gap-2">
@@ -190,12 +172,7 @@ export default function ChatPage() {
               <SquareIcon className="size-4" />
             </Button>
           ) : (
-            <Button
-              type="submit"
-              size="icon"
-              disabled={!input.trim()}
-              aria-label="Send message"
-            >
+            <Button type="submit" size="icon" disabled={!input.trim()} aria-label="Send message">
               <SendHorizontalIcon className="size-4" />
             </Button>
           )}
