@@ -20,7 +20,7 @@ const MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
 
 const anthropic = new Anthropic();
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3005;
 
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
@@ -44,7 +44,7 @@ function extractText(msg: RequestMessage): string {
 // Convert frontend messages to Anthropic API format
 function toAnthropicMessages(messages: RequestMessage[]): Anthropic.MessageParam[] {
   return messages.map((m) => ({
-    role: m.role === 'user' ? 'user' as const : 'assistant' as const,
+    role: m.role === 'user' ? ('user' as const) : ('assistant' as const),
     content: extractText(m),
   }));
 }
@@ -177,7 +177,9 @@ app.post('/api/chat', async (req, res) => {
 
       if (closed) break;
 
-      console.log(`[chat] Iteration ${iterations}: stop_reason=${response.stop_reason} (+${Date.now() - t0}ms)`);
+      console.log(
+        `[chat] Iteration ${iterations}: stop_reason=${response.stop_reason} (+${Date.now() - t0}ms)`,
+      );
 
       // If Claude wants to call tools, execute them and loop
       if (response.stop_reason === 'tool_use') {
@@ -189,9 +191,7 @@ app.post('/api/chat', async (req, res) => {
         for (const block of response.content) {
           if (block.type !== 'tool_use') continue;
 
-          const toolCallId = toolCallIds.get(
-            response.content.indexOf(block),
-          ) ?? crypto.randomUUID();
+          const toolCallId = toolCallIds.get(response.content.indexOf(block)) ?? crypto.randomUUID();
 
           // Emit tool input
           writePart(res, {
@@ -239,7 +239,7 @@ app.post('/api/chat', async (req, res) => {
       res.end();
       closed = true;
       clearInterval(heartbeat);
-      console.log(`[chat] Done (+${Date.now() - (Date.now())}ms)`);
+      console.log(`[chat] Done (+${Date.now() - Date.now()}ms)`);
     }
   } catch (err: any) {
     clearInterval(heartbeat);
